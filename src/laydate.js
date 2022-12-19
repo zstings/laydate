@@ -1259,6 +1259,7 @@
     ,zIndex: null //控件层叠顺序
     ,done: null //控件选择完毕后的回调，点击清空/现在/确定也均会触发
     ,change: null //日期时间改变后的回调
+    ,timesOption: null //自定义配置时间
   };
   
   //多语言
@@ -1697,13 +1698,14 @@
   //系统日期
   Class.prototype.systemDate = function(newDate){
     var thisDate = newDate || new Date();
+    const [hours, minutes, seconds] = this.config.timesOption || [null, null, null]
     return {
       year: thisDate.getFullYear() //年
       ,month: thisDate.getMonth() //月
       ,date: thisDate.getDate() //日
-      ,hours: newDate ? newDate.getHours() : 0 //时
-      ,minutes: newDate ? newDate.getMinutes() : 0 //分
-      ,seconds: newDate ? newDate.getSeconds() : 0 //秒
+      ,hours: newDate ? newDate.getHours() : hours&&hours[0] ? hours[0] : 0 //时
+      ,minutes: newDate ? newDate.getMinutes() : minutes&&minutes[0] ? minutes[0] :  0 //分
+      ,seconds: newDate ? newDate.getSeconds() : seconds&&seconds[0] ? seconds[0] : 0 //秒
     }
   };
   
@@ -1912,8 +1914,11 @@
     var that = this
     ,options = that.config, timestrap = {}
     ,dateTime = options[index > 41 ? 'endDate' : 'dateTime']
-    ,isOut, thisDateTime = lay.extend({}, dateTime, date || {});
+    ,isOut, thisDateTime = lay.extend({}, dateTime, date || {})
+    ,disabled = options.disabled, weekend = options.weekend;
+
     
+    // 标记最大最小
     lay.each({
       now: thisDateTime
       ,min: options.min
@@ -1931,8 +1936,29 @@
         return hms;
       }())).getTime();  //time：是否比较时分秒
     });
-    
     isOut = timestrap.now < timestrap.min || timestrap.now > timestrap.max;
+
+    // 标记直接禁用
+    if (disabled) {
+      lay.each({
+        now: thisDateTime
+      }, function(key, item){
+        const now = item.year + '-' + (item.month + 1 < 10 ? '0' + (item.month + 1) : item.month + 1) + '-' + (item.date < 10 ? '0' + (item.date) : item.date);
+        if(!isOut) isOut = disabled.includes(now);
+      });
+    }
+
+    if (weekend == 'disabled') {
+      lay.each({
+        now: thisDateTime
+      }, function(key, item){
+        const now = item.year + '-' + (item.month + 1 < 10 ? '0' + (item.month + 1) : item.month + 1) + '-' + (item.date < 10 ? '0' + (item.date) : item.date);
+        const wee = new Date(now).getDay();
+        if(!isOut) isOut = wee == 0 || wee == 6;
+      });
+    }
+    
+    
     elem && elem[isOut ? 'addClass' : 'removeClass'](DISABLED);
     return isOut;
   };
@@ -2152,10 +2178,13 @@
       }
       
       //生成时分秒
-      lay.each([24, 60, 60], function(i, item){
+      // lay.each([24, 60, 60], function(i, item){
+      console.log(options.timesOption)
+      lay.each(options.timesOption || [24, 60, 60], function(i, item){
         var li = lay.elem('li'), childUL = ['<p>'+ lang.time[i] +'</p><ol>'];
-        lay.each(new Array(item), function(ii){
-          childUL.push('<li'+ (that[startEnd][hms[i]] === ii ? ' class="'+ THIS +'"' : '') +'>'+ lay.digit(ii, 2) +'</li>');
+        lay.each(typeof item == "number" ? new Array(item) : item, function(ii, items){
+          console.log(that[startEnd][hms[i]], ii, items)
+          childUL.push('<li'+ (that[startEnd][hms[i]] === (items || ii) ? ' class="'+ THIS +'"' : '') +'>'+ lay.digit(items || ii, 2) +'</li>');
         });
         li.innerHTML = childUL.join('') + '</ol>';
         ul.appendChild(li);
@@ -2225,15 +2254,15 @@
         lay(ul).find('ol').each(function(i){
           var ol = this
           ,li = lay(ol).find('li')
-          ol.scrollTop = 30*(that[startEnd][hms[i]] - 2);
-          if(ol.scrollTop <= 0){
-            li.each(function(ii, item){
-              if(!lay(this).hasClass(DISABLED)){
-                ol.scrollTop = 30*(ii - 2);
-                return true;
-              }
-            });
-          }
+          ol.scrollTop = [...li].findIndex(item => item.classList.contains('layui-this')) * 30 - 60;
+          // if(ol.scrollTop <= 0){
+          //   li.each(function(ii, item){
+          //     if(!lay(this).hasClass(DISABLED)){
+          //       ol.scrollTop = 30*(ii - 2);
+          //       return true;
+          //     }
+          //   });
+          // }
         });
       }
       ,haveSpan = lay(elemHeader[2]).find('.'+ ELEM_TIME_TEXT);

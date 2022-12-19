@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+        .laydate-day-mark {
+            background: 0 0!important;
+            color: #d2d2d2!important;
+            cursor: not-allowed!important;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            pointer-events: none;
+        }
+        .laydate-time-list>li {
+            width: 50%!important;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="text" id="demoTest" placeholder="yyyy-MM-dd">
+    <!-- <script src="../dist/layDate.umd.js"></script> -->
+    <script src="../dist/layDate.js"></script>
+    <script>
+        laydate.render({
+            elem: '#demoTest',
+            type: 'datetime',
+            min: '2022-12-16',
+            max: '2023-12-30',
+            disabled: ['2022-12-19', '2022-12-20'],
+            weekend: 'disabled',
+            timesOption: [
+                [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+                [0, 30]
+            ],
+            btns: ['clear', 'confirm'],
+            ready: function (date) {
+            },
+            change: function (value, date) {
+            }
+        });
+    </script>
+
+
+</body>
+
+</html>
