@@ -1924,6 +1924,9 @@
       ,min: options.min
       ,max: options.max
     }, function(key, item){
+      item.hours = thisDateTime.hours
+      item.minutes = thisDateTime.minutes
+      item.seconds = thisDateTime.seconds
       timestrap[key] = that.newDate(lay.extend({
         year: item.year
         ,month: item.month
@@ -2179,11 +2182,10 @@
       
       //生成时分秒
       // lay.each([24, 60, 60], function(i, item){
-      console.log(options.timesOption)
+      // console.log(options.timesOption)
       lay.each(options.timesOption || [24, 60, 60], function(i, item){
         var li = lay.elem('li'), childUL = ['<p>'+ lang.time[i] +'</p><ol>'];
         lay.each(typeof item == "number" ? new Array(item) : item, function(ii, items){
-          console.log(that[startEnd][hms[i]], ii, items)
           childUL.push('<li'+ (that[startEnd][hms[i]] === (items || ii) ? ' class="'+ THIS +'"' : '') +'>'+ lay.digit(items || ii, 2) +'</li>');
         });
         li.innerHTML = childUL.join('') + '</ol>';
@@ -2327,7 +2329,7 @@
       start = start || options.dateTime;
       end = end || that.endDate;
       isOut = that.newDate(start).getTime() > that.newDate(end).getTime();
-      
+
       //如果不在有效日期内，直接禁用按钮，否则比较开始和结束日期
       (that.limit(null, start) || that.limit(null, end)) 
         ? elemBtn.addClass(DISABLED)

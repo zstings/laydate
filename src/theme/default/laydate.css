@@ -89,10 +89,9 @@ html #layuicss-laydate{display: none; position: absolute; width: 1989px;}
 .laydate-footer-btns span{margin: 0 0 0 -1px;}
 
 /* 年月列表 */
-.layui-laydate-list{position: absolute; left: 0; top: 0; width: 100%; height: 100%; padding: 10px; box-sizing: border-box; background-color: #fff;}
-.layui-laydate-list>li{position: relative; display: inline-block; width: 33.3%; height: 36px; line-height: 36px; margin: 3px 0; vertical-align: middle; text-align: center; cursor: pointer;}
+.layui-laydate-list{position: absolute; left: 0; top: 0; width: 100%; height: 100%; padding: 10px; box-sizing: border-box; background-color: #fff;display: flex;}
+.layui-laydate-list>li{position: relative; display: inline-block; flex: 1; height: 36px; line-height: 36px; margin: 3px 0; vertical-align: middle; text-align: center; cursor: pointer;}
 .laydate-month-list>li{width: 25%; margin: 17px 0;}
-.laydate-time-list{}
 .laydate-time-list>li{height: 100%; margin: 0; line-height: normal; cursor: default;}
 .laydate-time-list p{position: relative; top: -4px; line-height: 29px;}
 .laydate-time-list ol{height: 181px; overflow: hidden;}
